@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/code-repository-placement-1Csx2]
   workflow_dispatch:
 
 permissions:
