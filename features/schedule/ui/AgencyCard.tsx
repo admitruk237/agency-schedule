@@ -14,6 +14,7 @@ interface CardTheme {
   corridorBg: string;
   badgePrzeceny: string;
   badgeHaly: string;
+  badgeKoordynator: string;
   border: string;
 }
 
@@ -26,6 +27,7 @@ const THEMES: Record<AgencyName, CardTheme> = {
     corridorBg: 'bg-rose-950/10 text-rose-950 border-rose-300/50',
     badgePrzeceny: 'bg-rose-900 text-rose-50 shadow-rose-900/30',
     badgeHaly: 'bg-rose-700 text-rose-50 shadow-rose-700/30',
+    badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     border: 'border-rose-200/60',
   },
   PT: {
@@ -36,6 +38,7 @@ const THEMES: Record<AgencyName, CardTheme> = {
     corridorBg: 'bg-emerald-950/10 text-emerald-950 border-emerald-300/50',
     badgePrzeceny: 'bg-emerald-900 text-emerald-50 shadow-emerald-900/30',
     badgeHaly: 'bg-emerald-700 text-emerald-50 shadow-emerald-700/30',
+    badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     border: 'border-emerald-200/60',
   },
   Progres: {
@@ -46,6 +49,7 @@ const THEMES: Record<AgencyName, CardTheme> = {
     corridorBg: 'bg-slate-900/10 text-slate-800 border-slate-300/60',
     badgePrzeceny: 'bg-slate-800 text-slate-50 shadow-slate-800/30',
     badgeHaly: 'bg-slate-600 text-slate-50 shadow-slate-600/30',
+    badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     border: 'border-slate-200/80',
   },
   Synergia: {
@@ -56,6 +60,7 @@ const THEMES: Record<AgencyName, CardTheme> = {
     corridorBg: 'bg-red-950/10 text-red-950 border-red-300/50',
     badgePrzeceny: 'bg-red-900 text-red-50 shadow-red-900/30',
     badgeHaly: 'bg-red-700 text-red-50 shadow-red-700/30',
+    badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     border: 'border-red-200/60',
   },
 };
@@ -91,6 +96,14 @@ export default function AgencyCard({ schedule }: Props) {
             >
               <span className="text-[10px]">🏷</span>
               Przeceny
+            </span>
+          )}
+          {schedule.hasPrzeceny && (
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow ${theme.badgeKoordynator}`}
+            >
+              <span className="text-[10px]">👤</span>
+              Koordynator do końca zmiany
             </span>
           )}
           {schedule.hasHaly && (
