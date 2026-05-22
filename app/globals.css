@@ -21,10 +21,10 @@ body {
 .card-metallic-olensen {
   background: linear-gradient(
     145deg,
-    oklch(0.96 0.04 350) 0%,
-    oklch(0.88 0.11 350) 30%,
-    oklch(0.74 0.20 350) 60%,
-    oklch(0.82 0.14 350) 100%
+    oklch(0.96 0.03 5) 0%,
+    oklch(0.88 0.09 5) 30%,
+    oklch(0.74 0.16 5) 60%,
+    oklch(0.82 0.11 5) 100%
   );
 }
 
@@ -51,9 +51,9 @@ body {
 .card-metallic-synergia {
   background: linear-gradient(
     145deg,
-    oklch(0.94 0.06 25) 0%,
-    oklch(0.80 0.17 25) 30%,
-    oklch(0.64 0.24 25) 60%,
-    oklch(0.73 0.20 25) 100%
+    oklch(0.94 0.09 25) 0%,
+    oklch(0.80 0.21 25) 30%,
+    oklch(0.64 0.29 25) 60%,
+    oklch(0.73 0.25 25) 100%
   );
 }
