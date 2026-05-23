@@ -42,7 +42,6 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgeHaly: 'bg-emerald-700 text-emerald-50 shadow-emerald-700/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
-    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-emerald-950',
     border: 'border-emerald-200/60',
   },
   Progres: {
@@ -55,7 +54,6 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgeHaly: 'bg-slate-600 text-slate-50 shadow-slate-600/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
-    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-slate-800',
     border: 'border-slate-200/80',
   },
   Synergia: {
@@ -68,7 +66,6 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgeHaly: 'bg-red-700 text-red-50 shadow-red-700/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
-    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-red-950',
     border: 'border-red-200/60',
   },
 };
