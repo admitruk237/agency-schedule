@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CalendarDays, Info, RefreshCw, Tag, Truck } from 'lucide-react';
+import { CalendarDays, Clock4, Info, RefreshCw, Tag, Truck } from 'lucide-react';
 import {
   calculateSchedule,
   formatDate,
@@ -120,6 +120,15 @@ export default function ScheduleBoard() {
                 </span>
                 <p className="text-xs text-zinc-400">
                   Agencja wozi haly w tym tygodniu
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900 text-indigo-200 border border-indigo-700">
+                  <Clock4 size={10} />
+                  16:00
+                </span>
+                <p className="text-xs text-zinc-400">
+                  6 pracowników tej agencji wychodzi o 16:00
                 </p>
               </div>
             </div>

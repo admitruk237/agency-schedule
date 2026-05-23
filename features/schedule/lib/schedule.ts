@@ -15,12 +15,14 @@ const CORRIDOR_INITIAL: Record<Exclude<AgencyName, 'PT'>, number> = {
 // Rotation orders (week 0 = index 0)
 const PRZECENY_ORDER: AgencyName[] = ['Olensen', 'PT', 'Progres', 'Synergia'];
 const HALY_ORDER: AgencyName[] = ['PT', 'Synergia', 'Olensen', 'Progres'];
+const SIXTEEN_ORDER: AgencyName[] = ['Synergia', 'Olensen', 'Progres'];
 
 export interface AgencySchedule {
   name: AgencyName;
   corridor: string;
   hasPrzeceny: boolean;
   hasHaly: boolean;
+  has1600: boolean;
 }
 
 function getWeekSunday(date: Date): Date {
@@ -53,11 +55,14 @@ export function calculateSchedule(date: Date): AgencySchedule[] {
       corridor = CORRIDORS[idx] as Corridor;
     }
 
+    const sIdx = ((offset % 3) + 3) % 3;
+
     return {
       name: agency,
       corridor,
       hasPrzeceny: agency === PRZECENY_ORDER[pIdx],
       hasHaly: agency === HALY_ORDER[hIdx],
+      has1600: agency === SIXTEEN_ORDER[sIdx],
     };
   });
 }

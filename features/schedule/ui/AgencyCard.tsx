@@ -15,6 +15,8 @@ interface CardTheme {
   badgePrzeceny: string;
   badgeHaly: string;
   badgeKoordynator: string;
+  badge1600: string;
+  footer1600: string;
   border: string;
 }
 
@@ -28,6 +30,8 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgePrzeceny: 'bg-rose-900 text-rose-50 shadow-rose-900/30',
     badgeHaly: 'bg-rose-700 text-rose-50 shadow-rose-700/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
+    badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
+    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-rose-950',
     border: 'border-rose-200/60',
   },
   PT: {
@@ -39,6 +43,8 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgePrzeceny: 'bg-emerald-900 text-emerald-50 shadow-emerald-900/30',
     badgeHaly: 'bg-emerald-700 text-emerald-50 shadow-emerald-700/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
+    badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
+    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-emerald-950',
     border: 'border-emerald-200/60',
   },
   Progres: {
@@ -50,6 +56,8 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgePrzeceny: 'bg-slate-800 text-slate-50 shadow-slate-800/30',
     badgeHaly: 'bg-slate-600 text-slate-50 shadow-slate-600/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
+    badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
+    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-slate-800',
     border: 'border-slate-200/80',
   },
   Synergia: {
@@ -61,13 +69,14 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgePrzeceny: 'bg-red-900 text-red-50 shadow-red-900/30',
     badgeHaly: 'bg-red-700 text-red-50 shadow-red-700/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
+    badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
+    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-red-950',
     border: 'border-red-200/60',
   },
 };
 
 export default function AgencyCard({ schedule }: Props) {
   const theme = THEMES[schedule.name];
-  const hasBadge = schedule.hasPrzeceny || schedule.hasHaly;
 
   return (
     <div
@@ -106,6 +115,14 @@ export default function AgencyCard({ schedule }: Props) {
               Koordynator do końca zmiany
             </span>
           )}
+          {schedule.has1600 && (
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow ${theme.badge1600}`}
+            >
+              <span className="text-[10px]">🕓</span>
+              16:00
+            </span>
+          )}
           {schedule.hasHaly && (
             <span
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase shadow ${theme.badgeHaly}`}
@@ -131,6 +148,16 @@ export default function AgencyCard({ schedule }: Props) {
           Korytarz&nbsp;
           <span className="text-base">{schedule.corridor}</span>
         </div>
+
+        {/* 16:00 footer note */}
+        {schedule.has1600 && (
+          <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium ${theme.footer1600}`}
+          >
+            <span>🕓</span>
+            <span>6 pracowników wychodzi o&nbsp;<strong>16:00</strong></span>
+          </div>
+        )}
       </div>
 
       {/* Bottom shimmer */}
