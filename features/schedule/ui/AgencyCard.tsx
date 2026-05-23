@@ -16,7 +16,6 @@ interface CardTheme {
   badgeHaly: string;
   badgeKoordynator: string;
   badge1600: string;
-  footer1600: string;
   border: string;
 }
 
@@ -31,7 +30,6 @@ const THEMES: Record<AgencyName, CardTheme> = {
     badgeHaly: 'bg-rose-700 text-rose-50 shadow-rose-700/30',
     badgeKoordynator: 'bg-amber-500 text-amber-50 shadow-amber-500/30',
     badge1600: 'bg-indigo-700 text-indigo-50 shadow-indigo-700/30',
-    footer1600: 'bg-indigo-950/20 border-indigo-300/40 text-rose-950',
     border: 'border-rose-200/60',
   },
   PT: {
@@ -149,15 +147,6 @@ export default function AgencyCard({ schedule }: Props) {
           <span className="text-base">{schedule.corridor}</span>
         </div>
 
-        {/* 16:00 footer note */}
-        {schedule.has1600 && (
-          <div
-            className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium ${theme.footer1600}`}
-          >
-            <span>🕓</span>
-            <span>6 pracowników wychodzi o&nbsp;<strong>16:00</strong></span>
-          </div>
-        )}
       </div>
 
       {/* Bottom shimmer */}
