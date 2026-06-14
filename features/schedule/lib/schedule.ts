@@ -6,16 +6,24 @@ const REF = new Date(2026, 4, 17, 0, 0, 0, 0);
 const CORRIDORS = ['30-31', '36', '37'] as const;
 type Corridor = (typeof CORRIDORS)[number];
 
-const CORRIDOR_INITIAL: Record<Exclude<AgencyName, 'PT'>, number> = {
-  Olensen: 1,  // slot 1 = '36'
-  Progres: 2,  // slot 2 = '37'
-  Synergia: 0, // slot 0 = '30-31'
-};
+export interface RotationConfig {
+  corridorInitial: Record<Exclude<AgencyName, 'PT'>, number>;
+  przecenyOrder: AgencyName[];
+  halyOrder: AgencyName[];
+  sixteenOrder: AgencyName[];
+}
 
-// Rotation orders (week 0 = index 0)
-const PRZECENY_ORDER: AgencyName[] = ['PT', 'Olensen', 'Progres', 'Synergia'];
-const HALY_ORDER: AgencyName[] = ['PT', 'Synergia', 'Olensen', 'Progres'];
-const SIXTEEN_ORDER: AgencyName[] = ['Synergia', 'Olensen', 'Progres'];
+// Default rotation orders (week 0 = index 0)
+export const DEFAULT_ROTATION_CONFIG: RotationConfig = {
+  corridorInitial: {
+    Olensen: 1,  // slot 1 = '36'
+    Progres: 2,  // slot 2 = '37'
+    Synergia: 0, // slot 0 = '30-31'
+  },
+  przecenyOrder: ['PT', 'Olensen', 'Progres', 'Synergia'],
+  halyOrder: ['PT', 'Synergia', 'Olensen', 'Progres'],
+  sixteenOrder: ['Synergia', 'Olensen', 'Progres'],
+};
 
 export interface AgencySchedule {
   name: AgencyName;
@@ -37,10 +45,14 @@ export function getWeekOffset(date: Date): number {
   return Math.round(ms / (7 * 24 * 60 * 60 * 1000));
 }
 
-export function calculateSchedule(date: Date): AgencySchedule[] {
+export function calculateSchedule(
+  date: Date,
+  config: RotationConfig = DEFAULT_ROTATION_CONFIG,
+): AgencySchedule[] {
   const offset = getWeekOffset(date);
   const pIdx = ((offset % 4) + 4) % 4;
   const hIdx = ((offset % 4) + 4) % 4;
+  const sIdx = ((offset % 3) + 3) % 3;
 
   const agencies: AgencyName[] = ['Olensen', 'PT', 'Progres', 'Synergia'];
 
@@ -50,19 +62,17 @@ export function calculateSchedule(date: Date): AgencySchedule[] {
     if (agency === 'PT') {
       corridor = '35';
     } else {
-      const initial = CORRIDOR_INITIAL[agency as Exclude<AgencyName, 'PT'>];
+      const initial = config.corridorInitial[agency as Exclude<AgencyName, 'PT'>];
       const idx = ((initial + offset) % 3 + 3) % 3;
       corridor = CORRIDORS[idx] as Corridor;
     }
 
-    const sIdx = ((offset % 3) + 3) % 3;
-
     return {
       name: agency,
       corridor,
-      hasPrzeceny: agency === PRZECENY_ORDER[pIdx],
-      hasHaly: agency === HALY_ORDER[hIdx],
-      has1600: agency === SIXTEEN_ORDER[sIdx],
+      hasPrzeceny: agency === config.przecenyOrder[pIdx],
+      hasHaly: agency === config.halyOrder[hIdx],
+      has1600: agency === config.sixteenOrder[sIdx],
     };
   });
 }

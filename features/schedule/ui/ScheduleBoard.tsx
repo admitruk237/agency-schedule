@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { CalendarDays, Clock4, Info, RefreshCw, Tag, Truck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { CalendarDays, Clock4, Info, RefreshCw, Settings, Tag, Truck, Users } from 'lucide-react';
 import {
+  DEFAULT_ROTATION_CONFIG,
+  RotationConfig,
   calculateSchedule,
   formatDate,
   formatShortDate,
@@ -10,6 +13,7 @@ import {
 } from '../lib/schedule';
 import AgencyCard from './AgencyCard';
 import CalendarModal from './CalendarModal';
+import AbsenceSummary from '../../grafik/ui/AbsenceSummary';
 
 function isSaturday(date: Date): boolean {
   return date.getDay() === 6;
@@ -18,8 +22,16 @@ function isSaturday(date: Date): boolean {
 export default function ScheduleBoard() {
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [showCalendar, setShowCalendar] = useState(false);
+  const [rotationConfig, setRotationConfig] = useState<RotationConfig>(DEFAULT_ROTATION_CONFIG);
 
-  const schedule = calculateSchedule(selectedDate);
+  useEffect(() => {
+    fetch('/api/rotation')
+      .then((res) => res.json())
+      .then((data: RotationConfig) => setRotationConfig(data))
+      .catch(() => setRotationConfig(DEFAULT_ROTATION_CONFIG));
+  }, []);
+
+  const schedule = calculateSchedule(selectedDate, rotationConfig);
   const { start, end } = getWeekRange(selectedDate);
   const isToday = formatDate(selectedDate) === formatDate(new Date());
 
@@ -41,14 +53,30 @@ export default function ScheduleBoard() {
               </h1>
             </div>
 
-            {/* Calendar button */}
-            <button
-              onClick={() => setShowCalendar(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150 shrink-0"
-            >
-              <CalendarDays size={16} />
-              Sprawdź inną datę
-            </button>
+            {/* Header actions */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/grafik"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150"
+              >
+                <Users size={16} />
+                Grafik pracowników
+              </Link>
+              <Link
+                href="/admin"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150"
+              >
+                <Settings size={16} />
+                Panel admina
+              </Link>
+              <button
+                onClick={() => setShowCalendar(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150"
+              >
+                <CalendarDays size={16} />
+                Sprawdź inną datę
+              </button>
+            </div>
           </div>
 
           {/* Date & week info */}
@@ -95,6 +123,9 @@ export default function ScheduleBoard() {
             <AgencyCard key={agency.name} schedule={agency} />
           ))}
         </div>
+
+        {/* Absence summary */}
+        <AbsenceSummary date={selectedDate} />
 
         {/* Legend & Info */}
         <div className="grid sm:grid-cols-2 gap-4 mb-6">
