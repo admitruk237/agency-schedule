@@ -13,7 +13,7 @@ const CORRIDOR_INITIAL: Record<Exclude<AgencyName, 'PT'>, number> = {
 };
 
 // Rotation orders (week 0 = index 0)
-const PRZECENY_ORDER: AgencyName[] = ['Olensen', 'PT', 'Progres', 'Synergia'];
+const PRZECENY_ORDER: AgencyName[] = ['PT', 'Olensen', 'Progres', 'Synergia'];
 const HALY_ORDER: AgencyName[] = ['PT', 'Synergia', 'Olensen', 'Progres'];
 const SIXTEEN_ORDER: AgencyName[] = ['Synergia', 'Olensen', 'Progres'];
 
