@@ -8,19 +8,19 @@ import {
   AGENCIES,
   DaysOffEntry,
   Employee,
-  MONTH_NAMES_PL,
   daysInMonth,
   getDayStatus,
+  getSaturdays,
   nextDayStatus,
 } from '../lib/grafik';
-
-const WEEKDAY_SHORT = ['nd', 'pon', 'wt', 'śr', 'czw', 'pt', 'sob'];
+import { useLanguage } from '../../i18n/LanguageContext';
 
 function emptyEntry(employeeId: string, year: number, month: number): DaysOffEntry {
   return { employeeId, year, month, off: [], sick: [] };
 }
 
 export default function GrafikBoard() {
+  const { t, language, monthNames, weekdayShort } = useLanguage();
   const today = new Date();
   const [agency, setAgency] = useState<AgencyName>('Olensen');
   const [year, setYear] = useState(today.getFullYear());
@@ -30,6 +30,8 @@ export default function GrafikBoard() {
   const [newName, setNewName] = useState('');
   const [loading, setLoading] = useState(true);
   const [marking, setMarking] = useState(false);
+  const [holidayDay, setHolidayDay] = useState(1);
+  const [markingHoliday, setMarkingHoliday] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -101,17 +103,28 @@ export default function GrafikBoard() {
 
   async function markSaturdays() {
     setMarking(true);
-    await fetch('/api/days-off/saturdays', {
+    await fetch('/api/days-off/bulk', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ agency, year, month }),
+      body: JSON.stringify({ agency, year, month, days: getSaturdays(year, month) }),
     });
     await loadData();
     setMarking(false);
   }
 
+  async function markHoliday() {
+    setMarkingHoliday(true);
+    await fetch('/api/days-off/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ agency, year, month, days: [holidayDay] }),
+    });
+    await loadData();
+    setMarkingHoliday(false);
+  }
+
   function downloadPdf() {
-    window.open(`/api/grafik/pdf?agency=${agency}&year=${year}&month=${month}`, '_blank');
+    window.open(`/api/grafik/pdf?agency=${agency}&year=${year}&month=${month}&lang=${language}`, '_blank');
   }
 
   const total = daysInMonth(year, month);
@@ -125,19 +138,16 @@ export default function GrafikBoard() {
           className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-300 transition-colors mb-6"
         >
           <ArrowLeft size={16} />
-          Powrót do harmonogramu
+          {t('common.backToSchedule')}
         </Link>
 
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">Grafik pracowników</h1>
-        <p className="text-sm text-zinc-500 mb-8">
-          Zarządzaj dniami wolnymi i chorobowymi dla pracowników agencji. Kliknij komórkę, aby
-          przełączyć status: praca → wychodne → chorobowe.
-        </p>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">{t('grafik.title')}</h1>
+        <p className="text-sm text-zinc-500 mb-8">{t('grafik.description')}</p>
 
         {/* Controls */}
         <div className="flex flex-wrap items-end gap-3 mb-6">
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs text-zinc-500 uppercase tracking-wide">Agencja</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.agency')}</span>
             <select
               value={agency}
               onChange={(e) => setAgency(e.target.value as AgencyName)}
@@ -152,13 +162,13 @@ export default function GrafikBoard() {
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs text-zinc-500 uppercase tracking-wide">Miesiąc</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.month')}</span>
             <select
               value={month}
               onChange={(e) => setMonth(Number(e.target.value))}
               className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white"
             >
-              {MONTH_NAMES_PL.map((name, idx) => (
+              {monthNames.map((name, idx) => (
                 <option key={name} value={idx + 1}>
                   {name}
                 </option>
@@ -167,7 +177,7 @@ export default function GrafikBoard() {
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs text-zinc-500 uppercase tracking-wide">Rok</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.year')}</span>
             <input
               type="number"
               value={year}
@@ -175,6 +185,31 @@ export default function GrafikBoard() {
               className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white w-24"
             />
           </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs text-zinc-500 uppercase tracking-wide">{t('common.day')}</span>
+            <select
+              value={holidayDay}
+              onChange={(e) => setHolidayDay(Number(e.target.value))}
+              className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white w-20"
+            >
+              {days.map((day) => (
+                <option key={day} value={day}>
+                  {day}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <button
+            type="button"
+            onClick={markHoliday}
+            disabled={markingHoliday || employees.length === 0}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white disabled:opacity-50 transition-all duration-150"
+          >
+            {markingHoliday && <Loader2 size={14} className="animate-spin" />}
+            {t('grafik.markHoliday')}
+          </button>
 
           <div className="flex-1" />
 
@@ -185,7 +220,7 @@ export default function GrafikBoard() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white disabled:opacity-50 transition-all duration-150"
           >
             {marking && <Loader2 size={14} className="animate-spin" />}
-            Soboty wolne dla całej agencji
+            {t('grafik.markSaturdays')}
           </button>
 
           <button
@@ -195,7 +230,7 @@ export default function GrafikBoard() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-zinc-900 text-sm font-semibold hover:bg-zinc-200 disabled:opacity-50 transition-colors"
           >
             <Download size={16} />
-            Pobierz PDF
+            {t('grafik.downloadPdf')}
           </button>
         </div>
 
@@ -205,7 +240,7 @@ export default function GrafikBoard() {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addEmployee()}
-            placeholder="Imię i nazwisko pracownika"
+            placeholder={t('grafik.employeeNamePlaceholder')}
             className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white flex-1 max-w-sm placeholder:text-zinc-500"
           />
           <button
@@ -214,7 +249,7 @@ export default function GrafikBoard() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150"
           >
             <Plus size={16} />
-            Dodaj
+            {t('grafik.add')}
           </button>
         </div>
 
@@ -222,11 +257,11 @@ export default function GrafikBoard() {
         <div className="flex items-center gap-4 mb-4 text-xs text-zinc-400">
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded bg-zinc-600 inline-block" />
-            Wychodne
+            {t('grafik.legendOff')}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded bg-amber-600/70 inline-block" />
-            Chorobowe
+            {t('grafik.legendSick')}
           </span>
         </div>
 
@@ -234,19 +269,17 @@ export default function GrafikBoard() {
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-zinc-500">
             <Loader2 size={16} className="animate-spin" />
-            Wczytywanie...
+            {t('common.loading')}
           </div>
         ) : employees.length === 0 ? (
-          <p className="text-sm text-zinc-500">
-            Brak pracowników w tej agencji. Dodaj pierwszego powyżej.
-          </p>
+          <p className="text-sm text-zinc-500">{t('grafik.noEmployees')}</p>
         ) : (
           <div className="overflow-x-auto border border-zinc-800 rounded-2xl">
             <table className="border-collapse text-xs w-full">
               <thead>
                 <tr>
                   <th className="sticky left-0 z-10 bg-zinc-900 border border-zinc-800 px-3 py-2 text-left font-semibold min-w-[90px]">
-                    {MONTH_NAMES_PL[month - 1]}
+                    {monthNames[month - 1]}
                   </th>
                   {employees.map((emp) => (
                     <th
@@ -258,7 +291,7 @@ export default function GrafikBoard() {
                           type="button"
                           onClick={() => deleteEmployee(emp.id)}
                           className="text-zinc-600 hover:text-red-400 transition-colors"
-                          aria-label={`Usuń ${emp.name}`}
+                          aria-label={t('grafik.deleteEmployee', { name: emp.name })}
                         >
                           <Trash2 size={12} />
                         </button>
@@ -273,7 +306,7 @@ export default function GrafikBoard() {
               <tbody>
                 {days.map((day) => {
                   const date = new Date(year, month - 1, day);
-                  const weekday = WEEKDAY_SHORT[date.getDay()];
+                  const weekday = weekdayShort[date.getDay()];
                   const isSaturday = date.getDay() === 6;
                   return (
                     <tr key={day}>

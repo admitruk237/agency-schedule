@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { CalendarDays, X } from 'lucide-react';
 import { toInputValue, fromInputValue } from '../lib/schedule';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface Props {
   selected: Date;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function CalendarModal({ selected, onSelect, onClose }: Props) {
+  const { t } = useLanguage();
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export default function CalendarModal({ selected, onSelect, onClose }: Props) {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <CalendarDays size={20} className="text-zinc-400" />
-            <h3 className="text-white font-semibold text-lg">Wybierz datę</h3>
+            <h3 className="text-white font-semibold text-lg">{t('calendar.selectDate')}</h3>
           </div>
           <button
             onClick={onClose}
@@ -46,7 +48,7 @@ export default function CalendarModal({ selected, onSelect, onClose }: Props) {
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">
-              Data
+              {t('calendar.date')}
             </label>
             <input
               type="date"
@@ -61,10 +63,7 @@ export default function CalendarModal({ selected, onSelect, onClose }: Props) {
             />
           </div>
 
-          <p className="text-xs text-zinc-500 leading-relaxed">
-            Po wybraniu daty harmonogram zostanie automatycznie przeliczony
-            dla tygodnia roboczego obejmującego tę datę.
-          </p>
+          <p className="text-xs text-zinc-500 leading-relaxed">{t('calendar.helpText')}</p>
         </div>
 
         <div className="mt-6 pt-4 border-t border-zinc-800 flex justify-end">
@@ -72,7 +71,7 @@ export default function CalendarModal({ selected, onSelect, onClose }: Props) {
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors"
           >
-            Anuluj
+            {t('common.cancel')}
           </button>
         </div>
       </div>

@@ -14,12 +14,14 @@ import {
 import AgencyCard from './AgencyCard';
 import CalendarModal from './CalendarModal';
 import AbsenceSummary from '../../grafik/ui/AbsenceSummary';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 function isSaturday(date: Date): boolean {
   return date.getDay() === 6;
 }
 
 export default function ScheduleBoard() {
+  const { t, locale } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [rotationConfig, setRotationConfig] = useState<RotationConfig>(DEFAULT_ROTATION_CONFIG);
@@ -44,12 +46,12 @@ export default function ScheduleBoard() {
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-2">
-                System zarządzania harmonogramem
+                {t('home.subtitle')}
               </p>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-                Harmonogram Pracy
+                {t('home.titleLine1')}
                 <br />
-                <span className="text-zinc-400">Agencji</span>
+                <span className="text-zinc-400">{t('home.titleLine2')}</span>
               </h1>
             </div>
 
@@ -60,21 +62,21 @@ export default function ScheduleBoard() {
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150"
               >
                 <Users size={16} />
-                Grafik pracowników
+                {t('home.employeeSchedule')}
               </Link>
               <Link
                 href="/admin"
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150"
               >
                 <Settings size={16} />
-                Panel admina
+                {t('home.adminPanel')}
               </Link>
               <button
                 onClick={() => setShowCalendar(true)}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white transition-all duration-150"
               >
                 <CalendarDays size={16} />
-                Sprawdź inną datę
+                {t('home.checkOtherDate')}
               </button>
             </div>
           </div>
@@ -82,11 +84,13 @@ export default function ScheduleBoard() {
           {/* Date & week info */}
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 text-sm">
             <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 w-fit">
-              <span className="text-zinc-500">Wyświetlana data:</span>
-              <span className="font-semibold text-white capitalize">{formatDate(selectedDate)}</span>
+              <span className="text-zinc-500">{t('home.displayedDate')}</span>
+              <span className="font-semibold text-white capitalize">
+                {formatDate(selectedDate, locale)}
+              </span>
               {isToday && (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-700 text-zinc-300">
-                  dziś
+                  {t('home.today')}
                 </span>
               )}
             </div>
@@ -96,23 +100,24 @@ export default function ScheduleBoard() {
                 className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
               >
                 <RefreshCw size={12} />
-                wróć do dziś
+                {t('home.backToToday')}
               </button>
             )}
           </div>
 
           <div className="mt-3 flex items-center gap-2 text-xs text-zinc-500">
             <span className="inline-block w-2 h-2 rounded-full bg-zinc-600" />
-            Tydzień roboczy:&nbsp;
+            {t('home.workWeek')}&nbsp;
             <span className="text-zinc-400 font-medium">
-              {formatShortDate(start)} (ndz) — {formatShortDate(end)} (pt)
+              {formatShortDate(start, locale)} {t('home.weekdaySun')} — {formatShortDate(end, locale)}{' '}
+              {t('home.weekdayFri')}
             </span>
-            <span className="text-zinc-600 ml-1">· sobota: dzień wolny</span>
+            <span className="text-zinc-600 ml-1">· {t('home.saturdayOff')}</span>
           </div>
 
           {isSaturday(selectedDate) && (
             <div className="mt-3 px-4 py-2 rounded-xl bg-zinc-800/60 border border-zinc-700 text-xs text-zinc-400 w-fit">
-              ℹ️ Sobota to dzień wolny — pokazano harmonogram bieżącego tygodnia
+              ℹ️ {t('home.saturdayNotice')}
             </div>
           )}
         </div>
@@ -132,35 +137,29 @@ export default function ScheduleBoard() {
           {/* Badge legend */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4">
-              Legenda oznaczeń
+              {t('home.legendTitle')}
             </h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-200 border border-zinc-700">
                   <Tag size={10} />
-                  Przeceny
+                  {t('card.przeceny')}
                 </span>
-                <p className="text-xs text-zinc-400">
-                  Agencja wykonuje przeceny w tym tygodniu
-                </p>
+                <p className="text-xs text-zinc-400">{t('home.legendPrzecenyDesc')}</p>
               </div>
               <div className="flex items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-200 border border-zinc-700">
                   <Truck size={10} />
-                  Haly
+                  {t('card.haly')}
                 </span>
-                <p className="text-xs text-zinc-400">
-                  Agencja wozi haly w tym tygodniu
-                </p>
+                <p className="text-xs text-zinc-400">{t('home.legendHalyDesc')}</p>
               </div>
               <div className="flex items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900 text-indigo-200 border border-indigo-700">
                   <Clock4 size={10} />
                   16:00
                 </span>
-                <p className="text-xs text-zinc-400">
-                  6 pracowników tej agencji wychodzi o 16:00
-                </p>
+                <p className="text-xs text-zinc-400">{t('home.legend1600Desc')}</p>
               </div>
             </div>
           </div>
@@ -170,17 +169,15 @@ export default function ScheduleBoard() {
             <div className="flex items-start gap-2">
               <RefreshCw size={14} className="text-zinc-500 mt-0.5 shrink-0" />
               <p className="text-xs text-zinc-400 leading-relaxed">
-                Wszystkie informacje są aktualne i&nbsp;
-                <span className="text-zinc-300 font-medium">
-                  aktualizują się automatycznie każdej niedzieli
-                </span>{' '}
-                zgodnie z rotacją.
+                {t('home.autoUpdate1')}&nbsp;
+                <span className="text-zinc-300 font-medium">{t('home.autoUpdateBold')}</span>{' '}
+                {t('home.autoUpdate2')}
               </p>
             </div>
             <div className="flex items-start gap-2">
               <Info size={14} className="text-zinc-500 mt-0.5 shrink-0" />
               <p className="text-xs text-zinc-400 leading-relaxed">
-                W razie zmiany kolejności prosimy o kontakt:{' '}
+                {t('home.contactText')}{' '}
                 <span className="text-white font-semibold">Andrii Dmytruk</span>
               </p>
             </div>

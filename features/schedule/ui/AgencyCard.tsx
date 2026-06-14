@@ -1,6 +1,7 @@
 'use client';
 
 import { AgencyName, AgencySchedule } from '../lib/schedule';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface Props {
   schedule: AgencySchedule;
@@ -71,6 +72,7 @@ const THEMES: Record<AgencyName, CardTheme> = {
 };
 
 export default function AgencyCard({ schedule }: Props) {
+  const { t } = useLanguage();
   const theme = THEMES[schedule.name];
 
   return (
@@ -99,7 +101,7 @@ export default function AgencyCard({ schedule }: Props) {
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase shadow ${theme.badgePrzeceny}`}
             >
               <span className="text-[10px]">🏷</span>
-              Przeceny
+              {t('card.przeceny')}
             </span>
           )}
           {schedule.hasPrzeceny && (
@@ -107,7 +109,7 @@ export default function AgencyCard({ schedule }: Props) {
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow ${theme.badgeKoordynator}`}
             >
               <span className="text-[10px]">👤</span>
-              Koordynator do końca zmiany
+              {t('card.koordynator')}
             </span>
           )}
           {schedule.has1600 && (
@@ -123,7 +125,7 @@ export default function AgencyCard({ schedule }: Props) {
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase shadow ${theme.badgeHaly}`}
             >
               <span className="text-[10px]">🚛</span>
-              Haly
+              {t('card.haly')}
             </span>
           )}
         </div>
@@ -131,7 +133,7 @@ export default function AgencyCard({ schedule }: Props) {
         {/* Agency name */}
         <div className="flex-1 flex flex-col justify-center">
           <p className={`text-xs font-semibold uppercase tracking-widest ${theme.subtext} mb-1`}>
-            Agencja
+            {t('common.agency')}
           </p>
           <h2 className={`text-3xl font-bold tracking-tight ${theme.text}`}>{schedule.name}</h2>
         </div>
@@ -140,7 +142,7 @@ export default function AgencyCard({ schedule }: Props) {
         <div
           className={`self-start px-4 py-2 rounded-xl border text-sm font-bold tracking-wide ${theme.corridorBg}`}
         >
-          Korytarz&nbsp;
+          {t('common.corridor')}&nbsp;
           <span className="text-base">{schedule.corridor}</span>
         </div>
 

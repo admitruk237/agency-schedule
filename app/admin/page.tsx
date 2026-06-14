@@ -8,6 +8,7 @@ import {
   DEFAULT_ROTATION_CONFIG,
   RotationConfig,
 } from '@/features/schedule/lib/schedule';
+import { useLanguage } from '@/features/i18n/LanguageContext';
 
 const CORRIDOR_SLOTS = ['30-31', '36', '37'];
 const CORRIDOR_AGENCIES: Exclude<AgencyName, 'PT'>[] = ['Olensen', 'Progres', 'Synergia'];
@@ -31,6 +32,7 @@ function OrderEditor({
   order: AgencyName[];
   onChange: (next: AgencyName[]) => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
       <h3 className="text-sm font-semibold text-white mb-1">{title}</h3>
@@ -53,7 +55,7 @@ function OrderEditor({
                 onClick={() => onChange(moveItem(order, index, -1))}
                 disabled={index === 0}
                 className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 disabled:opacity-30 disabled:hover:text-zinc-400 disabled:hover:border-zinc-700 transition-colors"
-                aria-label="Przesuń wyżej"
+                aria-label={t('admin.moveUp')}
               >
                 <ArrowUp size={14} />
               </button>
@@ -62,7 +64,7 @@ function OrderEditor({
                 onClick={() => onChange(moveItem(order, index, 1))}
                 disabled={index === order.length - 1}
                 className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 disabled:opacity-30 disabled:hover:text-zinc-400 disabled:hover:border-zinc-700 transition-colors"
-                aria-label="Przesuń niżej"
+                aria-label={t('admin.moveDown')}
               >
                 <ArrowDown size={14} />
               </button>
@@ -75,6 +77,7 @@ function OrderEditor({
 }
 
 export default function AdminPage() {
+  const { t } = useLanguage();
   const [config, setConfig] = useState<RotationConfig>(DEFAULT_ROTATION_CONFIG);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -107,52 +110,43 @@ export default function AdminPage() {
           className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-300 transition-colors mb-6"
         >
           <ArrowLeft size={16} />
-          Powrót do harmonogramu
+          {t('common.backToSchedule')}
         </Link>
 
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-          Panel administracyjny
-        </h1>
-        <p className="text-sm text-zinc-500 mb-8">
-          Tutaj można zmienić kolejność rotacji oznaczeń (Przeceny, Haly, 16:00) oraz
-          początkowe korytarze. Pierwsza pozycja na liście odpowiada bieżącemu tygodniu
-          referencyjnemu (tydzień 0, niedziela 17.05.2026).
-        </p>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">{t('admin.title')}</h1>
+        <p className="text-sm text-zinc-500 mb-8">{t('admin.description')}</p>
 
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-zinc-500">
             <Loader2 size={16} className="animate-spin" />
-            Wczytywanie...
+            {t('common.loading')}
           </div>
         ) : (
           <div className="space-y-6">
             <div className="grid sm:grid-cols-3 gap-4">
               <OrderEditor
-                title="Przeceny"
-                description="Kolejność agencji wykonujących przeceny."
+                title={t('card.przeceny')}
+                description={t('admin.przecenyDesc')}
                 order={config.przecenyOrder}
                 onChange={(next) => setConfig({ ...config, przecenyOrder: next })}
               />
               <OrderEditor
-                title="Haly"
-                description="Kolejność agencji wożących haly."
+                title={t('card.haly')}
+                description={t('admin.halyDesc')}
                 order={config.halyOrder}
                 onChange={(next) => setConfig({ ...config, halyOrder: next })}
               />
               <OrderEditor
                 title="16:00"
-                description="Kolejność agencji z wcześniejszym wyjściem (Olensen, Progres, Synergia)."
+                description={t('admin.sixteenDesc')}
                 order={config.sixteenOrder}
                 onChange={(next) => setConfig({ ...config, sixteenOrder: next })}
               />
             </div>
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-              <h3 className="text-sm font-semibold text-white mb-1">Korytarze startowe</h3>
-              <p className="text-xs text-zinc-500 mb-4">
-                Korytarz przypisany każdej agencji w tygodniu referencyjnym (PT ma zawsze
-                korytarz 35).
-              </p>
+              <h3 className="text-sm font-semibold text-white mb-1">{t('admin.corridorsTitle')}</h3>
+              <p className="text-xs text-zinc-500 mb-4">{t('admin.corridorsDesc')}</p>
               <div className="grid sm:grid-cols-3 gap-3">
                 {CORRIDOR_AGENCIES.map((agency) => (
                   <label
@@ -192,10 +186,10 @@ export default function AdminPage() {
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-zinc-900 text-sm font-semibold hover:bg-zinc-200 disabled:opacity-60 transition-colors"
               >
                 {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-                Zapisz zmiany
+                {t('admin.save')}
               </button>
               {savedAt && (
-                <span className="text-xs text-emerald-400">Zapisano!</span>
+                <span className="text-xs text-emerald-400">{t('admin.saved')}</span>
               )}
             </div>
           </div>

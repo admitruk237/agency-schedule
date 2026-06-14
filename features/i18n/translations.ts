@@ -1,0 +1,291 @@
+export type Language = 'pl' | 'uk' | 'ro';
+
+export const DEFAULT_LANGUAGE: Language = 'pl';
+
+export const LANGUAGES: Language[] = ['pl', 'uk', 'ro'];
+
+export const LANGUAGE_LABELS: Record<Language, string> = {
+  pl: 'Polski',
+  uk: 'Українська',
+  ro: 'Română (Moldova)',
+};
+
+export const LOCALE_MAP: Record<Language, string> = {
+  pl: 'pl-PL',
+  uk: 'uk-UA',
+  ro: 'ro-MD',
+};
+
+export const MONTH_NAMES: Record<Language, string[]> = {
+  pl: [
+    'Styczeń',
+    'Luty',
+    'Marzec',
+    'Kwiecień',
+    'Maj',
+    'Czerwiec',
+    'Lipiec',
+    'Sierpień',
+    'Wrzesień',
+    'Październik',
+    'Listopad',
+    'Grudzień',
+  ],
+  uk: [
+    'Січень',
+    'Лютий',
+    'Березень',
+    'Квітень',
+    'Травень',
+    'Червень',
+    'Липень',
+    'Серпень',
+    'Вересень',
+    'Жовтень',
+    'Листопад',
+    'Грудень',
+  ],
+  ro: [
+    'Ianuarie',
+    'Februarie',
+    'Martie',
+    'Aprilie',
+    'Mai',
+    'Iunie',
+    'Iulie',
+    'August',
+    'Septembrie',
+    'Octombrie',
+    'Noiembrie',
+    'Decembrie',
+  ],
+};
+
+// Order matches Date.getDay(): 0 = Sunday ... 6 = Saturday
+export const WEEKDAY_SHORT: Record<Language, string[]> = {
+  pl: ['nd', 'pon', 'wt', 'śr', 'czw', 'pt', 'sob'],
+  uk: ['нд', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'],
+  ro: ['du', 'lu', 'ma', 'mi', 'jo', 'vi', 'sâ'],
+};
+
+export const translations: Record<Language, Record<string, string>> = {
+  pl: {
+    'common.loading': 'Wczytywanie...',
+    'common.cancel': 'Anuluj',
+    'common.agency': 'Agencja',
+    'common.month': 'Miesiąc',
+    'common.year': 'Rok',
+    'common.corridor': 'Korytarz',
+    'common.backToSchedule': 'Powrót do harmonogramu',
+    'common.day': 'Dzień',
+
+    'home.subtitle': 'System zarządzania harmonogramem',
+    'home.titleLine1': 'Harmonogram Pracy',
+    'home.titleLine2': 'Agencji',
+    'home.employeeSchedule': 'Grafik pracowników',
+    'home.adminPanel': 'Panel admina',
+    'home.checkOtherDate': 'Sprawdź inną datę',
+    'home.displayedDate': 'Wyświetlana data:',
+    'home.today': 'dziś',
+    'home.backToToday': 'wróć do dziś',
+    'home.workWeek': 'Tydzień roboczy:',
+    'home.weekdaySun': '(ndz)',
+    'home.weekdayFri': '(pt)',
+    'home.saturdayOff': 'sobota: dzień wolny',
+    'home.saturdayNotice': 'Sobota to dzień wolny — pokazano harmonogram bieżącego tygodnia',
+    'home.legendTitle': 'Legenda oznaczeń',
+    'home.legendPrzecenyDesc': 'Agencja wykonuje przeceny w tym tygodniu',
+    'home.legendHalyDesc': 'Agencja wozi haly w tym tygodniu',
+    'home.legend1600Desc': '6 pracowników tej agencji wychodzi o 16:00',
+    'home.autoUpdate1': 'Wszystkie informacje są aktualne i',
+    'home.autoUpdateBold': 'aktualizują się automatycznie każdej niedzieli',
+    'home.autoUpdate2': 'zgodnie z rotacją.',
+    'home.contactText': 'W razie zmiany kolejności prosimy o kontakt:',
+
+    'card.przeceny': 'Przeceny',
+    'card.koordynator': 'Koordynator do końca zmiany',
+    'card.haly': 'Haly',
+
+    'calendar.selectDate': 'Wybierz datę',
+    'calendar.date': 'Data',
+    'calendar.helpText':
+      'Po wybraniu daty harmonogram zostanie automatycznie przeliczony dla tygodnia roboczego obejmującego tę datę.',
+
+    'absence.title': 'Nieobecności na dziś',
+    'absence.off': 'na wychodnym',
+    'absence.sick': 'na chorobowym',
+
+    'grafik.title': 'Grafik pracowników',
+    'grafik.description':
+      'Zarządzaj dniami wolnymi i chorobowymi dla pracowników agencji. Kliknij komórkę, aby przełączyć status: praca → wychodne → chorobowe.',
+    'grafik.markSaturdays': 'Soboty wolne dla całej agencji',
+    'grafik.markHoliday': 'Oznacz dzień wolny dla całej agencji',
+    'grafik.downloadPdf': 'Pobierz PDF',
+    'grafik.employeeNamePlaceholder': 'Imię i nazwisko pracownika',
+    'grafik.add': 'Dodaj',
+    'grafik.legendOff': 'Wychodne',
+    'grafik.legendSick': 'Chorobowe',
+    'grafik.noEmployees': 'Brak pracowników w tej agencji. Dodaj pierwszego powyżej.',
+    'grafik.deleteEmployee': 'Usuń {name}',
+
+    'admin.title': 'Panel administracyjny',
+    'admin.description':
+      'Tutaj można zmienić kolejność rotacji oznaczeń (Przeceny, Haly, 16:00) oraz początkowe korytarze. Pierwsza pozycja na liście odpowiada bieżącemu tygodniu referencyjnemu (tydzień 0, niedziela 17.05.2026).',
+    'admin.przecenyDesc': 'Kolejność agencji wykonujących przeceny.',
+    'admin.halyDesc': 'Kolejność agencji wożących haly.',
+    'admin.sixteenDesc': 'Kolejność agencji z wcześniejszym wyjściem (Olensen, Progres, Synergia).',
+    'admin.corridorsTitle': 'Korytarze startowe',
+    'admin.corridorsDesc':
+      'Korytarz przypisany każdej agencji w tygodniu referencyjnym (PT ma zawsze korytarz 35).',
+    'admin.save': 'Zapisz zmiany',
+    'admin.saved': 'Zapisano!',
+    'admin.moveUp': 'Przesuń wyżej',
+    'admin.moveDown': 'Przesuń niżej',
+  },
+  uk: {
+    'common.loading': 'Завантаження...',
+    'common.cancel': 'Скасувати',
+    'common.agency': 'Агенція',
+    'common.month': 'Місяць',
+    'common.year': 'Рік',
+    'common.corridor': 'Коридор',
+    'common.backToSchedule': 'Повернутися до графіку',
+    'common.day': 'День',
+
+    'home.subtitle': 'Система управління графіком',
+    'home.titleLine1': 'Графік роботи',
+    'home.titleLine2': 'Агенцій',
+    'home.employeeSchedule': 'Графік працівників',
+    'home.adminPanel': 'Панель адміністратора',
+    'home.checkOtherDate': 'Перевірити іншу дату',
+    'home.displayedDate': 'Відображена дата:',
+    'home.today': 'сьогодні',
+    'home.backToToday': 'повернутися до сьогодні',
+    'home.workWeek': 'Робочий тиждень:',
+    'home.weekdaySun': '(нд)',
+    'home.weekdayFri': '(пт)',
+    'home.saturdayOff': 'субота: вихідний день',
+    'home.saturdayNotice': 'Субота — вихідний день — показано графік поточного тижня',
+    'home.legendTitle': 'Легенда позначень',
+    'home.legendPrzecenyDesc': 'Агенція виконує переоцінки цього тижня',
+    'home.legendHalyDesc': 'Агенція перевозить халі цього тижня',
+    'home.legend1600Desc': '6 працівників цієї агенції закінчують о 16:00',
+    'home.autoUpdate1': 'Уся інформація актуальна та',
+    'home.autoUpdateBold': 'оновлюється автоматично щонеділі',
+    'home.autoUpdate2': 'відповідно до ротації.',
+    'home.contactText': 'У разі зміни черговості, будь ласка, звертайтесь:',
+
+    'card.przeceny': 'Переоцінки',
+    'card.koordynator': 'Координатор до кінця зміни',
+    'card.haly': 'Халі',
+
+    'calendar.selectDate': 'Виберіть дату',
+    'calendar.date': 'Дата',
+    'calendar.helpText':
+      'Після вибору дати графік буде автоматично перераховано для робочого тижня, що включає цю дату.',
+
+    'absence.title': 'Відсутні сьогодні',
+    'absence.off': 'на вихідному',
+    'absence.sick': 'на лікарняному',
+
+    'grafik.title': 'Графік працівників',
+    'grafik.description':
+      "Керуйте вихідними та лікарняними днями працівників агенції. Натисніть на клітинку, щоб змінити статус: робота → вихідний → лікарняний.",
+    'grafik.markSaturdays': 'Суботи вихідні для всієї агенції',
+    'grafik.markHoliday': 'Позначити день вихідним для всієї агенції',
+    'grafik.downloadPdf': 'Завантажити PDF',
+    'grafik.employeeNamePlaceholder': "Прізвище та ім'я працівника",
+    'grafik.add': 'Додати',
+    'grafik.legendOff': 'Вихідний',
+    'grafik.legendSick': 'Лікарняний',
+    'grafik.noEmployees': 'У цій агенції немає працівників. Додайте першого вище.',
+    'grafik.deleteEmployee': 'Видалити {name}',
+
+    'admin.title': 'Панель адміністратора',
+    'admin.description':
+      'Тут можна змінити порядок ротації позначень (Переоцінки, Халі, 16:00) та початкові коридори. Перша позиція у списку відповідає поточному референсному тижню (тиждень 0, неділя 17.05.2026).',
+    'admin.przecenyDesc': 'Порядок агенцій, що виконують переоцінки.',
+    'admin.halyDesc': 'Порядок агенцій, що перевозять халі.',
+    'admin.sixteenDesc': 'Порядок агенцій з раннім завершенням зміни (Olensen, Progres, Synergia).',
+    'admin.corridorsTitle': 'Початкові коридори',
+    'admin.corridorsDesc':
+      'Коридор, призначений кожній агенції у референсному тижні (PT завжди має коридор 35).',
+    'admin.save': 'Зберегти зміни',
+    'admin.saved': 'Збережено!',
+    'admin.moveUp': 'Перемістити вище',
+    'admin.moveDown': 'Перемістити нижче',
+  },
+  ro: {
+    'common.loading': 'Se încarcă...',
+    'common.cancel': 'Anulează',
+    'common.agency': 'Agenție',
+    'common.month': 'Lună',
+    'common.year': 'An',
+    'common.corridor': 'Coridor',
+    'common.backToSchedule': 'Înapoi la program',
+    'common.day': 'Ziua',
+
+    'home.subtitle': 'Sistem de gestionare a programului',
+    'home.titleLine1': 'Programul de lucru',
+    'home.titleLine2': 'al agențiilor',
+    'home.employeeSchedule': 'Programul angajaților',
+    'home.adminPanel': 'Panou de administrare',
+    'home.checkOtherDate': 'Verifică altă dată',
+    'home.displayedDate': 'Data afișată:',
+    'home.today': 'azi',
+    'home.backToToday': 'înapoi la azi',
+    'home.workWeek': 'Săptămâna de lucru:',
+    'home.weekdaySun': '(dum)',
+    'home.weekdayFri': '(vin)',
+    'home.saturdayOff': 'sâmbătă: zi liberă',
+    'home.saturdayNotice': 'Sâmbăta este zi liberă — este afișat programul săptămânii curente',
+    'home.legendTitle': 'Legenda simbolurilor',
+    'home.legendPrzecenyDesc': 'Agenția face reduceri de preț în această săptămână',
+    'home.legendHalyDesc': 'Agenția transportă hale în această săptămână',
+    'home.legend1600Desc': '6 angajați ai acestei agenții ies la 16:00',
+    'home.autoUpdate1': 'Toate informațiile sunt actuale și',
+    'home.autoUpdateBold': 'se actualizează automat în fiecare duminică',
+    'home.autoUpdate2': 'conform rotației.',
+    'home.contactText': 'În caz de schimbare a ordinii, vă rugăm contactați:',
+
+    'card.przeceny': 'Reduceri',
+    'card.koordynator': 'Coordonator până la finalul turei',
+    'card.haly': 'Hale',
+
+    'calendar.selectDate': 'Selectează data',
+    'calendar.date': 'Data',
+    'calendar.helpText':
+      'După selectarea datei, programul va fi recalculat automat pentru săptămâna de lucru care include această dată.',
+
+    'absence.title': 'Absențe astăzi',
+    'absence.off': 'în zi liberă',
+    'absence.sick': 'în concediu medical',
+
+    'grafik.title': 'Programul angajaților',
+    'grafik.description':
+      'Gestionează zilele libere și de concediu medical pentru angajații agenției. Apasă pe celulă pentru a schimba starea: lucru → liber → concediu medical.',
+    'grafik.markSaturdays': 'Sâmbetele libere pentru toată agenția',
+    'grafik.markHoliday': 'Marchează ziua liberă pentru toată agenția',
+    'grafik.downloadPdf': 'Descarcă PDF',
+    'grafik.employeeNamePlaceholder': 'Numele angajatului',
+    'grafik.add': 'Adaugă',
+    'grafik.legendOff': 'Zi liberă',
+    'grafik.legendSick': 'Concediu medical',
+    'grafik.noEmployees': 'Nu există angajați în această agenție. Adaugă primul mai sus.',
+    'grafik.deleteEmployee': 'Șterge pe {name}',
+
+    'admin.title': 'Panou de administrare',
+    'admin.description':
+      'Aici poți schimba ordinea rotației indicatorilor (Reduceri, Hale, 16:00) și coridoarele inițiale. Prima poziție din listă corespunde săptămânii de referință curente (săptămâna 0, duminică 17.05.2026).',
+    'admin.przecenyDesc': 'Ordinea agențiilor care fac reduceri de preț.',
+    'admin.halyDesc': 'Ordinea agențiilor care transportă hale.',
+    'admin.sixteenDesc': 'Ordinea agențiilor cu ieșire mai timpurie (Olensen, Progres, Synergia).',
+    'admin.corridorsTitle': 'Coridoare inițiale',
+    'admin.corridorsDesc':
+      'Coridorul atribuit fiecărei agenții în săptămâna de referință (PT are mereu coridorul 35).',
+    'admin.save': 'Salvează modificările',
+    'admin.saved': 'Salvat!',
+    'admin.moveUp': 'Mișcă mai sus',
+    'admin.moveDown': 'Mișcă mai jos',
+  },
+};

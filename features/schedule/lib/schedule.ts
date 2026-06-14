@@ -84,8 +84,8 @@ export function getWeekRange(date: Date): { start: Date; end: Date } {
   return { start, end };
 }
 
-export function formatDate(date: Date): string {
-  return date.toLocaleDateString('pl-PL', {
+export function formatDate(date: Date, locale: string = 'pl-PL'): string {
+  return date.toLocaleDateString(locale, {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -93,8 +93,8 @@ export function formatDate(date: Date): string {
   });
 }
 
-export function formatShortDate(date: Date): string {
-  return date.toLocaleDateString('pl-PL', {
+export function formatShortDate(date: Date, locale: string = 'pl-PL'): string {
+  return date.toLocaleDateString(locale, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

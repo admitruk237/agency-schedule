@@ -24,21 +24,6 @@ export type DayStatus = 'work' | 'off' | 'sick';
 
 export const AGENCIES: AgencyName[] = ['Olensen', 'PT', 'Progres', 'Synergia'];
 
-export const MONTH_NAMES_PL = [
-  'Styczeń',
-  'Luty',
-  'Marzec',
-  'Kwiecień',
-  'Maj',
-  'Czerwiec',
-  'Lipiec',
-  'Sierpień',
-  'Wrzesień',
-  'Październik',
-  'Listopad',
-  'Grudzień',
-];
-
 export function daysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }

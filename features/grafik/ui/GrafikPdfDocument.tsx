@@ -1,6 +1,14 @@
-import { Document, Page, View, Text, StyleSheet } from '@react-pdf/renderer';
+import path from 'path';
+import { Document, Page, View, Text, StyleSheet, Font } from '@react-pdf/renderer';
 import { AgencyName } from '../../schedule/lib/schedule';
-import { DaysOffEntry, Employee, MONTH_NAMES_PL, daysInMonth, getDayStatus } from '../lib/grafik';
+import { DaysOffEntry, Employee, daysInMonth, getDayStatus } from '../lib/grafik';
+import { Language, MONTH_NAMES, translations } from '../../i18n/translations';
+
+// Geist supports Cyrillic and Polish/Romanian diacritics, unlike the standard Helvetica PDF font.
+Font.register({
+  family: 'Geist',
+  src: path.join(process.cwd(), 'assets/fonts/Geist-Regular.ttf'),
+});
 
 const COL_WIDTH = 20;
 const ROW_HEIGHT = 14;
@@ -8,7 +16,7 @@ const HEADER_HEIGHT = 110;
 const DAY_COL_WIDTH = 60;
 
 const styles = StyleSheet.create({
-  page: { padding: 24, fontFamily: 'Helvetica' },
+  page: { padding: 24, fontFamily: 'Geist' },
   title: { fontSize: 12, fontWeight: 700, marginBottom: 8 },
   table: { borderWidth: 1, borderColor: '#000' },
   row: { flexDirection: 'row' },
@@ -64,15 +72,17 @@ interface Props {
   agency: AgencyName;
   year: number;
   month: number;
+  lang: Language;
   employees: Employee[];
   entries: Record<string, DaysOffEntry>;
 }
 
-export default function GrafikPdfDocument({ agency, year, month, employees, entries }: Props) {
+export default function GrafikPdfDocument({ agency, year, month, lang, employees, entries }: Props) {
   const total = daysInMonth(year, month);
   const days = Array.from({ length: total }, (_, i) => i + 1);
-  const monthLabel = MONTH_NAMES_PL[month - 1];
+  const monthLabel = MONTH_NAMES[lang][month - 1];
   const monthAbbr = monthLabel.slice(0, 4).toLowerCase();
+  const t = translations[lang];
 
   return (
     <Document>
@@ -121,11 +131,11 @@ export default function GrafikPdfDocument({ agency, year, month, employees, entr
         <View style={styles.legend}>
           <View style={styles.legendItem}>
             <View style={[styles.legendSwatch, styles.cellOff]} />
-            <Text style={styles.legendText}>Wychodne</Text>
+            <Text style={styles.legendText}>{t['grafik.legendOff']}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendSwatch, styles.cellSick]} />
-            <Text style={styles.legendText}>Chorobowe</Text>
+            <Text style={styles.legendText}>{t['grafik.legendSick']}</Text>
           </View>
         </View>
       </Page>
