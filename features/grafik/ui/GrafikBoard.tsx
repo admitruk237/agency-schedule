@@ -32,6 +32,9 @@ export default function GrafikBoard() {
   const [marking, setMarking] = useState(false);
   const [holidayDay, setHolidayDay] = useState(1);
   const [markingHoliday, setMarkingHoliday] = useState(false);
+  const [bulkEmployeeId, setBulkEmployeeId] = useState('');
+  const [bulkDaysInput, setBulkDaysInput] = useState('');
+  const [addingBulkDays, setAddingBulkDays] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -54,6 +57,16 @@ export default function GrafikBoard() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (employees.length === 0) {
+      setBulkEmployeeId('');
+      return;
+    }
+    if (!employees.some((e) => e.id === bulkEmployeeId)) {
+      setBulkEmployeeId(employees[0].id);
+    }
+  }, [employees, bulkEmployeeId]);
 
   async function addEmployee() {
     const name = newName.trim();
@@ -121,6 +134,36 @@ export default function GrafikBoard() {
     });
     await loadData();
     setMarkingHoliday(false);
+  }
+
+  async function addDaysOffForEmployee() {
+    if (!bulkEmployeeId) return;
+
+    const total = daysInMonth(year, month);
+    const parsed = Array.from(
+      new Set(
+        bulkDaysInput
+          .split(',')
+          .map((s) => parseInt(s.trim(), 10))
+          .filter((n) => Number.isFinite(n) && n >= 1 && n <= total),
+      ),
+    );
+    if (parsed.length === 0) return;
+
+    setAddingBulkDays(true);
+    const current = entries[bulkEmployeeId] ?? emptyEntry(bulkEmployeeId, year, month);
+    const off = Array.from(new Set([...current.off, ...parsed])).sort((a, b) => a - b);
+    const updated: DaysOffEntry = { employeeId: bulkEmployeeId, year, month, off, sick: current.sick };
+
+    await fetch('/api/days-off', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    });
+
+    setEntries((prev) => ({ ...prev, [bulkEmployeeId]: updated }));
+    setBulkDaysInput('');
+    setAddingBulkDays(false);
   }
 
   function downloadPdf() {
@@ -253,6 +296,38 @@ export default function GrafikBoard() {
           </button>
         </div>
 
+        {/* Add days off for a specific employee */}
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+          <select
+            value={bulkEmployeeId}
+            onChange={(e) => setBulkEmployeeId(e.target.value)}
+            disabled={employees.length === 0}
+            className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white disabled:opacity-50"
+          >
+            {employees.map((emp) => (
+              <option key={emp.id} value={emp.id}>
+                {emp.name}
+              </option>
+            ))}
+          </select>
+          <input
+            value={bulkDaysInput}
+            onChange={(e) => setBulkDaysInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addDaysOffForEmployee()}
+            placeholder={t('grafik.daysPlaceholder')}
+            className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white flex-1 max-w-xs placeholder:text-zinc-500"
+          />
+          <button
+            type="button"
+            onClick={addDaysOffForEmployee}
+            disabled={addingBulkDays || !bulkEmployeeId}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-zinc-500 text-sm font-medium text-zinc-300 hover:text-white disabled:opacity-50 transition-all duration-150"
+          >
+            {addingBulkDays && <Loader2 size={14} className="animate-spin" />}
+            {t('grafik.addDaysOff')}
+          </button>
+        </div>
+
         {/* Legend */}
         <div className="flex items-center gap-4 mb-4 text-xs text-zinc-400">
           <span className="flex items-center gap-1.5">
@@ -275,16 +350,16 @@ export default function GrafikBoard() {
           <p className="text-sm text-zinc-500">{t('grafik.noEmployees')}</p>
         ) : (
           <div className="overflow-x-auto border border-zinc-800 rounded-2xl">
-            <table className="border-collapse text-xs w-full">
+            <table className="border-collapse text-xs w-full table-fixed">
               <thead>
                 <tr>
-                  <th className="sticky left-0 z-10 bg-zinc-900 border border-zinc-800 px-3 py-2 text-left font-semibold min-w-[90px]">
+                  <th className="sticky left-0 z-10 bg-zinc-900 border border-zinc-800 px-3 py-2 text-left font-semibold w-20">
                     {monthNames[month - 1]}
                   </th>
                   {employees.map((emp) => (
                     <th
                       key={emp.id}
-                      className="border border-zinc-800 bg-zinc-900 px-1 py-2 align-bottom"
+                      className="border border-zinc-800 bg-zinc-900 px-1 py-2 align-bottom w-9"
                     >
                       <div className="flex flex-col items-center justify-between h-28 gap-2">
                         <button
@@ -295,7 +370,10 @@ export default function GrafikBoard() {
                         >
                           <Trash2 size={12} />
                         </button>
-                        <span className="whitespace-nowrap text-[11px] font-medium [writing-mode:vertical-rl] rotate-180">
+                        <span
+                          title={emp.name}
+                          className="max-h-20 whitespace-nowrap overflow-hidden text-ellipsis text-[11px] font-medium [writing-mode:vertical-rl] rotate-180"
+                        >
                           {emp.name}
                         </span>
                       </div>
@@ -311,11 +389,13 @@ export default function GrafikBoard() {
                   return (
                     <tr key={day}>
                       <td
-                        className={`sticky left-0 z-10 border border-zinc-800 px-3 py-1 text-zinc-300 ${
-                          isSaturday ? 'bg-zinc-800/60' : 'bg-zinc-900'
+                        className={`sticky left-0 z-10 border px-3 py-1 font-medium ${
+                          isSaturday
+                            ? 'bg-sky-500/20 border-sky-500/40 text-sky-300'
+                            : 'bg-zinc-900 border-zinc-800 text-zinc-300'
                         }`}
                       >
-                        {day} <span className="text-zinc-500">{weekday}</span>
+                        {day} <span className={isSaturday ? 'text-sky-400/80' : 'text-zinc-500'}>{weekday}</span>
                       </td>
                       {employees.map((emp) => {
                         const entry = entries[emp.id] ?? emptyEntry(emp.id, year, month);
@@ -324,12 +404,14 @@ export default function GrafikBoard() {
                           <td
                             key={emp.id}
                             onClick={() => cycleDay(emp.id, day)}
-                            className={`border border-zinc-800 cursor-pointer transition-colors w-7 h-7 ${
+                            className={`border cursor-pointer transition-colors w-7 h-7 ${
                               status === 'off'
-                                ? 'bg-zinc-600'
+                                ? 'bg-zinc-600 border-zinc-800'
                                 : status === 'sick'
-                                  ? 'bg-amber-600/70'
-                                  : 'bg-zinc-950 hover:bg-zinc-800'
+                                  ? 'bg-amber-600/70 border-zinc-800'
+                                  : isSaturday
+                                    ? 'bg-sky-500/10 border-sky-500/30 hover:bg-sky-500/20'
+                                    : 'bg-zinc-950 border-zinc-800 hover:bg-zinc-800'
                             }`}
                           />
                         );
